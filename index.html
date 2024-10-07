@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Skip Ad Feature</title>
+    <style>
+      #ad-container,
+      #content-container {
+        width: 600px;
+        height: 400px;
+        margin: 50px auto;
+        text-align: center;
+        position: relative;
+      }
+
+      #skip-button {
+        display: block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #ff0000;
+        color: #fff;
+        border: none;
+        cursor: not-allowed;
+        border-radius: 5px;
+        position: sticky;
+        top: 350px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      #skip-button.enabled {
+        cursor: pointer;
+        background-color: green;
+      }
+
+      #ad,
+      #main-video {
+        width: 100%;
+        height: 100%;
+      }
+
+      #content-container {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ad-container">
+      <video id="ad" controls autoplay>
+        <source
+          src="https://www.w3schools.com/html/mov_bbb.mp4"
+          type="video/mp4"
+        />
+        Your browser does not support the video tag.
+      </video>
+      <button id="skip-button" disabled>
+        Skip Ad in <span id="countdown">5</span> seconds
+      </button>
+    </div>
+
+    <div id="content-container">
+      <iframe
+        id="main-video"
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/5cx7rvMvAWo?si=72TpfLYCH8ijTDow"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <script>
+      function startAd() {
+        const adVideo = document.getElementById("ad");
+        const skipButton = document.getElementById("skip-button");
+        const countdownElement = document.getElementById("countdown");
+        const contentContainer = document.getElementById("content-container");
+        const mainVideo = document.getElementById("main-video");
+        const adContainer = document.getElementById("ad-container");
+
+        let countdown = 5;
+        let countdownInterval = setInterval(() => {
+          countdown--;
+          countdownElement.textContent = countdown;
+          if (countdown === 0) {
+            clearInterval(countdownInterval);
+            skipButton.textContent = "Skip Ad";
+            skipButton.disabled = false;
+            skipButton.classList.add("enabled");
+            skipButton.style.cursor = "pointer";
+          }
+        }, 1000);
+
+        skipButton.addEventListener("click", () => {
+          if (!skipButton.disabled) {
+            adVideo.pause();
+            adContainer.style.display = "none";
+            contentContainer.style.display = "block";
+            mainVideo.play();
+          }
+        });
+
+        let adEndTimeout = setTimeout(() => {
+          adContainer.style.display = "none";
+          contentContainer.style.display = "block";
+          mainVideo.play();
+        }, 10000);
+
+        adVideo.addEventListener("ended", () => {
+          clearTimeout(adEndTimeout);
+          adContainer.style.display = "none";
+          contentContainer.style.display = "block";
+          mainVideo.play();
+        });
+      }
+      window.onload = startAd;
+    </script>
+  </body>
+</html>
